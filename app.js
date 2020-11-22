@@ -31,7 +31,9 @@ app.use((req, res, next) => {
   res.locals.user = req.user
   res.locals.success_msg = req.flash('success_msg')  // 設定 success_msg 訊息
   res.locals.warning_msg = req.flash('warning_msg')  // 設定 warning_msg 訊息
-  res.locals.error = req.flash('error')
+  res.locals.error = req.flash('error') //login頁面的錯誤訊息
+
+
   next()
 })
 
