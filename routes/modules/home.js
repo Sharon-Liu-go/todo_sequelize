@@ -12,7 +12,10 @@ router.get('/', (req, res) => {
     nest: true,
     userId
   })
-    .then((todos) => { return res.render('index', { todos: todos }) })
+    .then((todos) => {
+      console.log(todos)
+      return res.render('index', { todos: todos })
+    })
     .catch((error) => { return res.status(422).json(error) })
 })
 
