@@ -6,9 +6,11 @@ const User = db.User
 
 
 router.get('/', (req, res) => {
+  const userId = req.user.id
   return Todo.findAll({
     raw: true,
-    nest: true
+    nest: true,
+    userId
   })
     .then((todos) => { return res.render('index', { todos: todos }) })
     .catch((error) => { return res.status(422).json(error) })
@@ -19,3 +21,10 @@ router.get('/', (req, res) => {
 
 
 module.exports = router
+
+// const userId = req.user._id
+// Todo.find({ userId })
+//   .lean()
+//   .sort({ _id: 'asc' }) // desc
+//   .then(todos => res.render('index', { todos }))
+//   .catch(error => console.error(error))

@@ -4,6 +4,19 @@ const db = require('../.././models')
 const Todo = db.Todo
 const User = db.User
 
+//到create頁面
+router.get('/new', (req, res) => {
+  res.render('create')
+})
+
+//新增todo
+router.post('/new', (req, res) => {
+  const userId = req.user.id
+  const name = req.body.name
+  return Todo.create({ name: name, UserId: userId })
+    .then(() => res.redirect('/'))
+    .catch(error => console.log(error))
+})
 
 router.get('/:id', (req, res) => {
   const id = req.params.id
@@ -12,18 +25,9 @@ router.get('/:id', (req, res) => {
     .catch(error => console.log(error))
 })
 
-//到create頁面
 
-//新增todo
-router.put('/new', (req, res) => {
-  return Todo.create(req.body)
-    .then(todo => res.redirect('/'))
-    .catch(error => console.log(error))
-})
 
-router.get('/new', (req, res) => {
-  res.send(`happy world!`)
-})
+
 
 
 router.delete('/:id', (req, res) => {

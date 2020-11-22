@@ -1,11 +1,10 @@
-'use strict';
-const bcrypt = require('bcryptjs') // 載入加密套件
+'use strict'
+const bcrypt = require('bcryptjs')
 const SEED_USER = {
   name: 'root',
   email: 'root@example.com',
   password: '12345678'
-} //加入種子的登入者
-
+}
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('Users', [{
@@ -30,5 +29,3 @@ module.exports = {
       .then(() => queryInterface.bulkDelete('Users', null, {}))
   }
 }
-
-
