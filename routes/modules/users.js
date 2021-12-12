@@ -10,7 +10,7 @@ const passport = require('passport')
 
 
 router.post('/login', passport.authenticate('local', {
-  successRedirect: '/',
+  successRedirect: '/otp/setup-2fa',
   failureRedirect: '/users/login',
   failureFlash: true
 }))

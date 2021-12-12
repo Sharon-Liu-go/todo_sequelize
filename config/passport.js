@@ -1,5 +1,7 @@
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
+const FacebookStrategy = require('passport-facebook').Strategy
+const GoogleAuthenticator = require('passport-2fa-totp').GoogeAuthenticator;
 const bcrypt = require('bcryptjs')
 const db = require('../models')
 const User = db.User
@@ -20,7 +22,44 @@ module.exports = app => {
         })
       })
       .catch(err => done(err, false))
+  }, function (user, done) {
+    // 2nd step verification: TOTP code from Google Authenticator
+
+    if (!user.secret) {
+      done(new Error("Google Authenticator is not setup yet."));
+    } else {
+      // Google Authenticator uses 30 seconds key period
+      // https://github.com/google/google-authenticator/wiki/Key-Uri-Format
+
+      var secret = GoogleAuthenticator.decodeSecret(user.secret);
+      done(null, secret, 30);
+    }
+  }
+  ))
+  passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_ID,
+    clientSecret: process.env.FACEBOOK_SECRET,
+    callbackURL: process.env.FACEBOOK_CALLBACK,
+    profileFields: ['email', 'displayName']
+  }, (accessToken, refreshToken, profile, done) => {
+    const { name, email } = profile._json
+    User.findOne({ email })
+      .then(user => {
+        if (user) return done(null, user)
+        const randomPassword = Math.random().toString(36).slice(-8)
+        bcrypt
+          .genSalt(10)
+          .then(salt => bcrypt.hash(randomPassword, salt))
+          .then(hash => User.create({
+            name,
+            email,
+            password: hash
+          }))
+          .then(user => done(null, user))
+          .catch(err => done(err, false))
+      })
   }))
+
   passport.serializeUser((user, done) => {
     done(null, user.id)
   })

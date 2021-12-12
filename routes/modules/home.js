@@ -13,7 +13,7 @@ router.get('/', (req, res) => {
     userId
   })
     .then((todos) => {
-      console.log(todos)
+      // console.log(todos)
       return res.render('index', { todos: todos })
     })
     .catch((error) => { return res.status(422).json(error) })
